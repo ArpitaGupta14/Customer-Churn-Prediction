@@ -1,0 +1,58 @@
+# Importing necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset (replace 'customer_churn.csv' with your actual file path)
+df = pd.read_csv('customer_churn.csv')
+
+# Display basic information about the dataset
+print("Dataset Overview:")
+print(df.info())
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+# Basic statistics
+print("\nStatistical Summary:")
+print(df.describe())
+
+# Count of churned vs. retained customers
+plt.figure(figsize=(6,4))
+sns.countplot(x='Churn', data=df, palette='coolwarm')
+plt.title('Customer Churn Distribution')
+plt.xlabel('Churn')
+plt.ylabel('Count')
+plt.show()
+
+# Analyzing churn by categorical variables
+plt.figure(figsize=(10,5))
+sns.countplot(x='Contract', hue='Churn', data=df, palette='coolwarm')
+plt.title('Churn by Contract Type')
+plt.xlabel('Contract Type')
+plt.ylabel('Count')
+plt.legend(title='Churn', labels=['No', 'Yes'])
+plt.show()
+
+# Correlation heatmap (numerical columns)
+plt.figure(figsize=(10,6))
+sns.heatmap(df.corr(), annot=True, cmap='coolwarm')
+plt.title('Correlation Heatmap')
+plt.show()
+
+# Churn rate calculation
+total_customers = len(df)
+churned_customers = df[df['Churn'] == 'Yes'].shape[0]
+churn_rate = (churned_customers / total_customers) * 100
+print(f"\nCustomer Churn Rate: {churn_rate:.2f}%")
+
+# Grouping by tenure to analyze retention trends
+df['tenure_group'] = pd.cut(df['tenure'], bins=[0, 12, 24, 36, 48, 60, 72], 
+                           labels=['0-12M', '13-24M', '25-36M', '37-48M', '49-60M', '61-72M'])
+
+plt.figure(figsize=(8,5))
+sns.countplot(x='tenure_group', hue='Churn', data=df, palette='coolwarm')
+plt.title('Churn by Tenure Group')
+plt.xlabel('Tenure Group (Months)')
+plt.ylabel('Count')
+plt.legend(title='Churn', labels=['No', 'Yes'])
+plt.show()
